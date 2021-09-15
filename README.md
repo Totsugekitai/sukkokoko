@@ -19,3 +19,13 @@ CHANNEL=random // 流速強さランキングを投稿したいチャンネル�
 ```shell
 $ node app.js
 ```
+
+あとはcronとかで定時実行されるようにしてください。
+
+## Botの権限について
+
+scopeに以下を含めるようにしてください。
+
+- channels:history
+- channels:read
+- chat:write
