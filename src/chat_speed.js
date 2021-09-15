@@ -16,9 +16,14 @@ async function getNumberOfDayPost(app, token, channel) {
       limit: 500,
     });
 
+    const numberOfPost = Object.keys(result.messages).length;
+
+    if (numberOfPost === 0) {
+      return undefined;
+    }
     return {
       channel,
-      numberOfPost: Object.keys(result.messages).length
+      numberOfPost
     };
   } catch (error) {
     return undefined;
