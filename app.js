@@ -14,7 +14,7 @@ async function main() {
 
   const [_, conversationsNameMap] = await utils.getConversationsInformation(app);
 
-  chat_speed.postChatSpeed(app, token, conversationsNameMap['random'].id);
+  chat_speed.postChatSpeed(app, token, conversationsNameMap[process.env.CHANNEL].id);
 
   console.log('⚡️ Bolt app is running!');
 }

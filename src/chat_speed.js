@@ -1,5 +1,5 @@
 require('dotenv').config();
-const utils = require('./utils');
+// const utils = require('./utils');
 
 // IDで指定されたchannelの24時間以内のpost数を集計する
 async function getNumberOfDayPost(app, token, channel) {
@@ -8,17 +8,21 @@ async function getNumberOfDayPost(app, token, channel) {
   const yesterday = (new Date((current.valueOf() - unixDayTime)).getTime() / 1000);
   const oldest = yesterday.toString();
 
-  const result = await app.client.conversations.history({
-    token,
-    channel,
-    oldest,
-    limit: 500,
-  });
+  try {
+    const result = await app.client.conversations.history({
+      token,
+      channel,
+      oldest,
+      limit: 500,
+    });
 
-  return {
-    channel,
-    numberOfPost: Object.keys(result.messages).length
-  };
+    return {
+      channel,
+      numberOfPost: Object.keys(result.messages).length
+    };
+  } catch (error) {
+    return undefined;
+  }
 }
 
 // 全てのチャンネルの情報と流速のペアをソートして返す
@@ -26,20 +30,14 @@ async function getAllChannelsNumberOfPost(app, token) {
   const conversations = (await app.client.conversations.list()).channels;
   let channelsInfoWithNumberOfPost = [];
 
+  // conversationsをforEachで回したらクロージャ内でオブジェクトが破棄されて厳しくなったので普通のfor文で書いてます
   for (i = 0; i < Object.keys(conversations).length; i++) {
-    const numberOfPost = (await getNumberOfDayPost(app, token, conversations[i].id)).numberOfPost;
+    const channelObject = await getNumberOfDayPost(app, token, conversations[i].id);
+    if (channelObject === undefined) continue;
+    const numberOfPost = channelObject.numberOfPost;
     const channelWithNumberOfPost = { channel: conversations[i], numberOfPost };
     channelsInfoWithNumberOfPost.push(channelWithNumberOfPost);
   }
-
-  // こっちのコードは動かない(多分クロージャ内でオブジェクトが破棄されている)
-  /*   conversations.forEach(async (conversation) => {
-      const numberOfPost = (await getNumberOfDayPost(app, token, conversation.id)).numberOfPost;
-      const channelWithNumberOfPost = { channel: conversation, numberOfPost };
-      channelsInfoWithNumberOfPost.push(channelWithNumberOfPost);
-      // channelsInfoWithNumberOfPost.push({ channels: conversation, numberOfPost: (await getNumberOfDayPost(app, token, conversation.id)).numberOfPost });
-    });
-   */
 
   return channelsInfoWithNumberOfPost.sort(function (a, b) { return b.numberOfPost - a.numberOfPost });
 }
@@ -59,6 +57,7 @@ async function postChatSpeed(app, token, channel) {
     channel,
     text
   });
+  console.log("post chat speed log");
 }
 
 exports.postChatSpeed = postChatSpeed;
