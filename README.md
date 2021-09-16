@@ -12,6 +12,7 @@ SLACK_SIGNING_SECRET=<bot-slack-signing-secret>
 SLACK_BOT_TOKEN=xoxb-...
 SLACK_URL=https://hogehoge.slack.com  // 末尾にスラッシュを付けない
 CHANNEL=random // 流速強さランキングを投稿したいチャンネル名
+BOT_NAME=sukkokoko // ボットの名前
 ```
 
 ### 起動
