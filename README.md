@@ -26,6 +26,13 @@ $ node app.js
 
 scopeに以下を含めるようにしてください。
 
+### Bot Token Scopes
+
 - channels:history
 - channels:read
 - chat:write
+- users:read
+
+### User Token Scopes
+
+- channels:write
