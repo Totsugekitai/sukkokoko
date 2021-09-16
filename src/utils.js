@@ -1,3 +1,5 @@
+const { App } = require('@slack/bolt');
+
 // channel情報をマップにして返す関数
 // IDがキーのマップとnameがキーのマップの2つ
 async function getConversationsInformation(app) {
@@ -23,5 +25,60 @@ function getDateFromTsString(tsString) {
   return new Date(JSTString);
 }
 
+// 主にbotをchannel IDにinviteする関数
+// エラーが起きたらundefinedを返す（ここは要修正かもしれない）
+async function inviteChannel(channel, users) {
+  try {
+    const appUser = new App({
+      token: process.env.SLACK_USER_TOKEN,
+      signingSecret: process.env.SLACK_SIGNING_SECRET
+    });
+    return await appUser.client.conversations.invite({
+      token: process.env.SLACK_USER_TOKEN,
+      channel,
+      users
+    });
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+// ボットの情報を取ってくる関数
+async function getBotInfo(app, token, botName) {
+  try {
+    const usersList = await app.client.users.list({ token });
+    let botInfo = undefined;
+    for (let i = 0; i < usersList.members.length; i++) {
+      if (usersList.members[i].name === botName) {
+        botInfo = usersList.members[i];
+      }
+    }
+    return botInfo;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+// channel内にボットが参加しているか判定する関数
+async function isBotJoined(app, token, channel, botId) {
+  try {
+    const members = await app.client.conversations.members({
+      token,
+      channel
+    });
+    members.members.forEach(userId => {
+      if (userId === botId) return true;
+    });
+    return false;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
 exports.getConversationsInformation = getConversationsInformation;
 exports.getDateFromTsString = getDateFromTsString;
+exports.inviteChannel = inviteChannel;
+exports.getBotInfo = getBotInfo;
+exports.isBotJoined = isBotJoined;

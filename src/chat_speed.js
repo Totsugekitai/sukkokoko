@@ -1,5 +1,5 @@
 require('dotenv').config();
-// const utils = require('./utils');
+const utils = require('./utils');
 
 // IDで指定されたchannelの24時間以内のpost数を集計する
 async function getNumberOfDayPost(app, token, channel) {
@@ -35,9 +35,20 @@ async function getAllChannelsNumberOfPost(app, token) {
   const conversations = (await app.client.conversations.list()).channels;
   let channelsInfoWithNumberOfPost = [];
 
+  const botInfo = await utils.getBotInfo(app, token, process.env.BOT_NAME);
+  const botId = botInfo.id;
   // conversationsをforEachで回したらクロージャ内でオブジェクトが破棄されて厳しくなったので普通のfor文で書いてます
   for (i = 0; i < Object.keys(conversations).length; i++) {
-    const channelObject = await getNumberOfDayPost(app, token, conversations[i].id);
+    const conversationId = conversations[i].id;
+
+    // もしボットが入っていないパブリックチャンネルがあったら参加する
+    if ((await utils.isBotJoined(app, token, conversationId, botId)) === false) {
+      const result = await utils.inviteChannel(conversationId, botId);
+      // console.log(result);
+    }
+
+    // チャンネルの投稿数を集計してchannelsInfoWithNumberOfPostにpushする
+    const channelObject = await getNumberOfDayPost(app, token, conversationId);
     if (channelObject === undefined) continue;
     const numberOfPost = channelObject.numberOfPost;
     const channelWithNumberOfPost = { channel: conversations[i], numberOfPost };
