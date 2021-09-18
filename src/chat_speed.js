@@ -43,8 +43,7 @@ async function getAllChannelsNumberOfPost(app, token) {
 
     // もしボットが入っていないパブリックチャンネルがあったら参加する
     if ((await utils.isBotJoined(app, token, conversationId, botId)) === false) {
-      const result = await utils.inviteChannel(conversationId, botId);
-      // console.log(result);
+      await utils.inviteChannel(conversationId, botId);
     }
 
     // チャンネルの投稿数を集計してchannelsInfoWithNumberOfPostにpushする

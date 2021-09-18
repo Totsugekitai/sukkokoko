@@ -26,21 +26,19 @@ function getDateFromTsString(tsString) {
 }
 
 // 主にbotをchannel IDにinviteする関数
-// エラーが起きたらundefinedを返す（ここは要修正かもしれない）
 async function inviteChannel(channel, users) {
   try {
     const appUser = new App({
       token: process.env.SLACK_USER_TOKEN,
       signingSecret: process.env.SLACK_SIGNING_SECRET
     });
-    return await appUser.client.conversations.invite({
+    await appUser.client.conversations.invite({
       token: process.env.SLACK_USER_TOKEN,
       channel,
       users
     });
   } catch (error) {
-    console.error(error);
-    return undefined;
+    if (error.data.error !== 'already_in_channel' && error.data.error !== 'is_archived') console.error(error);
   }
 }
 
