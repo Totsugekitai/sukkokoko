@@ -1,6 +1,6 @@
 # sukkokoko
 
-slack botです。
+過去24時間のslackの流速を投稿するbotです。
 
 ## 使い方
 
