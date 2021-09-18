@@ -10,6 +10,7 @@
 ```
 SLACK_SIGNING_SECRET=<bot-slack-signing-secret>
 SLACK_BOT_TOKEN=xoxb-...
+SLACK_USER_TOKEN=xoxp-...
 CHANNEL=random // 流速強さランキングを投稿したいチャンネル名
 BOT_NAME=sukkokoko // ボットの名前
 ```
