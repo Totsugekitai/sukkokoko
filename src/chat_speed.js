@@ -64,7 +64,7 @@ async function postChatSpeed(app, token, channel) {
 
   let text = "*⏱本日の 流速強さ ランキング (575)🏃‍♂️🏃‍♂️🏃‍♂️*\n";
   for (i = 0; i < channelArray.length; i++) {
-    const s = `<${process.env.SLACK_URL}/archives/${channelArray[i].channel.id}|#${channelArray[i].channel.name}>:\t${channelArray[i].numberOfPost}\n`;
+    const s = `<#${channelArray[i].channel.id}>:\t${channelArray[i].numberOfPost}\n`;
     text += s;
   }
 
